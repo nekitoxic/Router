@@ -1,0 +1,21 @@
+version: "2"
+services:
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    working_dir: /var/www/html/
+    volumes:
+      - ./docker/logs/nginx:/var/log/nginx
+      - ./app:/var/www/html
+      - ./docker/images/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - "80:80"
+      - "444:443"
+
+  fpm:
+    build: ./docker/images/php
+    container_name: fpm
+    volumes:
+      - ./app:/var/www/html/
+    working_dir: /var/www/html/
