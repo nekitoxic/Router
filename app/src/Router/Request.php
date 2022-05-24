@@ -6,18 +6,18 @@ use Attribute;
 #[Attribute()]
 class Request
 {
-    private static string $url = '';
+    private string $url = '';
 
-    private static string $name;
+    private string $name;
 
     public function __construct(string $url, string $name)
     {
-        self::$url  = $url;
-        self::$name = $name;
+        $this->url  = $url;
+        $this->name = $name;
     }
 
     public function getParams(): array
     {
-        return ['url' => self::$url, 'name' => self::$name];
+        return ['url' => $this->url, 'name' => $this->name];
     }
 }

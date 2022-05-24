@@ -22,9 +22,10 @@ class Invoker
         $controller = $this->getControllerByUrl();
 
         if (!empty($controller)) {
-            $class = new $controller['class']();
+            $class  = ReflectionResolver::classResolve($controller['class']);
+            $method = new ReflectionMethod($class, $controller['method']);
 
-            var_dump((new ReflectionMethod($class, $controller['method']))->invoke($class));
+            $method->invokeArgs($class, ReflectionResolver::methodResolve($method));
         }
 
         return $responce->toArray();
@@ -32,11 +33,16 @@ class Invoker
 
     private function getControllerByUrl(): array
     {
-        foreach (StringHelper::pathToNamespace(FileHelper::getControllersFile()) as $controller) {
-            foreach ((new ReflectionClass($controller))->getMethods() as $method) {
+        // идём по всем файлам в папке Controllers 
+        foreach (StringHelper::pathToNamespace(FileHelper::getControllersFile()) as $className) {
+
+            // идём по всем публичным методам класса
+            foreach ((new ReflectionClass($className))->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
+
+                // Возвращаем имя класса и медота если url аргумента совпадает с переданным url браузера
                 foreach ($method->getAttributes(Request::class) as $attribute) {
-                    if($attribute->newInstance()->getParams()['url'] === $this->requestUrl) {
-                        return ['class' => $controller, 'method' => $method->name];
+                    if ($attribute->newInstance()->getParams()['url'] === $this->requestUrl) {
+                        return ['class' => $className, 'method' => $method->name];
                     }
                 }
             }
