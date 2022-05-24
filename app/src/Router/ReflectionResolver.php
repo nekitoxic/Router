@@ -4,7 +4,6 @@ namespace App\Router;
 
 use ReflectionClass;
 use ReflectionMethod;
-use stdClass;
 
 class ReflectionResolver
 {
@@ -40,7 +39,7 @@ class ReflectionResolver
             }
 
             // разобраться с дефолтными данными
-            $arguments[] = $param->getDefaultValue();
+            // $arguments[] = $param->getDefaultValue();
         }
 
         return $arguments;

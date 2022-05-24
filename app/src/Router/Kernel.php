@@ -17,6 +17,6 @@ final class Kernel
 
     public static function run()
     {
-        $invoker = (new Invoker($_SERVER['REQUEST_URI']))->castSpell();
+        (new Invoker($_SERVER['REQUEST_URI']))->castSpell();
     }
 }

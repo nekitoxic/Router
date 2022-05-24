@@ -25,7 +25,7 @@ class Invoker
             $class  = ReflectionResolver::classResolve($controller['class']);
             $method = new ReflectionMethod($class, $controller['method']);
 
-            $method->invokeArgs($class, ReflectionResolver::methodResolve($method));
+            // $method->invokeArgs($class, ReflectionResolver::methodResolve($method));
         }
 
         return $responce->toArray();
@@ -41,7 +41,7 @@ class Invoker
 
                 // Возвращаем имя класса и медота если url аргумента совпадает с переданным url браузера
                 foreach ($method->getAttributes(Request::class) as $attribute) {
-                    if ($attribute->newInstance()->getParams()['url'] === $this->requestUrl) {
+                    if (URLFormatter::isNeededURL($this->requestUrl, $attribute->newInstance()->getParams()['url'])) {
                         return ['class' => $className, 'method' => $method->name];
                     }
                 }

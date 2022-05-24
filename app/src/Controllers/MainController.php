@@ -14,7 +14,7 @@ class MainController
         $this->token = $token;
     }
 
-    #[Request('/main', 'main_index')]
+    #[Request('/main/{id}/', 'main_index')]
     public function index(Token $token, string $value, int $num) 
     {
         return ['url' => '/main', 'name' => 'mainIndex', 'value' => 'someValue'];
