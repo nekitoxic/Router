@@ -4,7 +4,7 @@ namespace App\Router;
 use Attribute;
 
 #[Attribute()]
-class Request
+class Endpoint
 {
     private string $url = '';
 

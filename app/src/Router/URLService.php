@@ -2,7 +2,7 @@
 
 namespace App\Router;
 
-class URLFormatter
+class URLService
 {
     private const SEPARATOR = '/';
 
@@ -14,7 +14,7 @@ class URLFormatter
             return false;
         }
 
-        if (!self::isEqualUrls($requestUrl,$attributeUrl)) {
+        if (!self::isEqualUrls($requestUrl, $attributeUrl)) {
             return false;
         }
 
@@ -41,17 +41,16 @@ class URLFormatter
     private static function isEqualUrls(string $requestUrl, string $attributeUrl): bool
     {
         $requestUrl = self::getUrlsToArray($requestUrl);
-        $attributeUrl = self::getUrlsToArray($attributeUrl);
         $result = [];
 
-        foreach ($attributeUrl as $key => $row) {
+        foreach (self::getUrlsToArray($attributeUrl) as $key => $row) {
             if ($row === $requestUrl[$key]) {
                 $result[] = $row;
 
                 continue;
             }
 
-            if (preg_match(self::URL_ATTRS_REGEXP, $row)) {
+            if (false !== preg_match(self::URL_ATTRS_REGEXP, $row)) {
                 $result[] = $requestUrl[$key];
             }
         }

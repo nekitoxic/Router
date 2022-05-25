@@ -3,7 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\Token;
-use App\Router\Request;
+use App\Router\Endpoint;
 
 class MainController
 {
@@ -14,13 +14,13 @@ class MainController
         $this->token = $token;
     }
 
-    #[Request('/main/{id}/', 'main_index')]
+    #[Endpoint('/main/{id}/company/{slug}', 'main_index')]
     public function index(Token $token, string $value, int $num) 
     {
         return ['url' => '/main', 'name' => 'mainIndex', 'value' => 'someValue'];
     }
 
-    #[Request('/main/list', 'main_list')]
+    #[Endpoint('/main/list', 'main_list')]
     public function many() 
     {
         echo 'MainControllers.many';
