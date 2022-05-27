@@ -17,6 +17,8 @@ class MainController
     #[Endpoint('/main/{id}/company/{value}/{num}', 'main_index')]
     public function index(Token $token, string $value, int $num) 
     {
+        echo 'value: '. $value . PHP_EOL . 'num: '. $num;
+        
         return ['url' => '/main', 'name' => 'mainIndex', 'value' => 'someValue'];
     }
 

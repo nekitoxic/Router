@@ -1,14 +1,13 @@
 <?php
 
-namespace App\Router\Helpers;
+namespace App\Router\Service;
 
-class RouterFileHelper
+class CoreFileService
 {
     private const CONTROLLERS_DIRECTORY = '/Controllers';
 
     public static function getControllersFile(): array
     {
-
         return self::recursiveFileScan(dirname(dirname(__DIR__)) . self::CONTROLLERS_DIRECTORY);
     }
 

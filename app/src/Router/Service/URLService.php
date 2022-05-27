@@ -1,8 +1,6 @@
 <?php
 
-namespace App\Router;
-
-use ReflectionAttribute;
+namespace App\Router\Service;
 
 class URLService
 {
@@ -12,11 +10,7 @@ class URLService
 
     public static function isNeededURL(string $requestUrl, string $attributeUrl): bool
     {
-        if (!self::isEqualLngUrls($requestUrl, $attributeUrl)) {
-            return false;
-        }
-
-        if (!self::isEqualUrls($requestUrl, $attributeUrl)) {
+        if (!self::isEqualLngUrls($requestUrl, $attributeUrl) || !self::isEqualUrls($requestUrl, $attributeUrl)) {
             return false;
         }
 
@@ -28,28 +22,6 @@ class URLService
         preg_match_all(self::URL_ATTRS_REGEXP, $attributeUrl, $matches);
 
         return $matches;
-    }
-
-    public static function getKeyValuesFromUrl(string $url, array $attributes): array
-    {
-        $attributeUrl = self::getNeededAttributeByUrl($url, $attributes)?->newInstance()->getParams();
-
-        if (null !== $attributeUrl) {
-            return self::getValuesFromUrl($url, $attributeUrl['url']);
-        }
-
-        return [];
-    }
-
-    public static function getNeededAttributeByUrl(string $url, array $attributes): ?ReflectionAttribute
-    {
-        foreach ($attributes as $attribute) {
-            if (self::isNeededURL($url, $attribute->newInstance()->getParams()['url'])) {
-                return $attribute;
-            }
-        }
-
-        return null;
     }
 
     private static function getUrlsToArray(string $url): array
@@ -79,10 +51,10 @@ class URLService
             }
         }
 
-        return empty(array_diff($result, $requestUrl));
+        return empty(array_diff($requestUrl, $result));
     }
 
-    private static function getValuesFromUrl(string $requestUrl, string $attributeUrl): array
+    public static function getKeyValuesFromUrl(string $requestUrl, string $attributeUrl): array
     {
         $attrArr    = self::getUrlsToArray($attributeUrl);
         $result     = [];
