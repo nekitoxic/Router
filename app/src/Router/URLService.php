@@ -2,6 +2,8 @@
 
 namespace App\Router;
 
+use ReflectionAttribute;
+
 class URLService
 {
     private const SEPARATOR = '/';
@@ -28,6 +30,28 @@ class URLService
         return $matches;
     }
 
+    public static function getKeyValuesFromUrl(string $url, array $attributes): array
+    {
+        $attributeUrl = self::getNeededAttributeByUrl($url, $attributes)?->newInstance()->getParams();
+
+        if (null !== $attributeUrl) {
+            return self::getValuesFromUrl($url, $attributeUrl['url']);
+        }
+
+        return [];
+    }
+
+    public static function getNeededAttributeByUrl(string $url, array $attributes): ?ReflectionAttribute
+    {
+        foreach ($attributes as $attribute) {
+            if (self::isNeededURL($url, $attribute->newInstance()->getParams()['url'])) {
+                return $attribute;
+            }
+        }
+
+        return null;
+    }
+
     private static function getUrlsToArray(string $url): array
     {
         return array_filter(explode(self::SEPARATOR, $url));
@@ -50,11 +74,31 @@ class URLService
                 continue;
             }
 
-            if (false !== preg_match(self::URL_ATTRS_REGEXP, $row)) {
+            if ((bool) preg_match(self::URL_ATTRS_REGEXP, $row)) {
                 $result[] = $requestUrl[$key];
             }
         }
 
         return empty(array_diff($result, $requestUrl));
+    }
+
+    private static function getValuesFromUrl(string $requestUrl, string $attributeUrl): array
+    {
+        $attrArr    = self::getUrlsToArray($attributeUrl);
+        $result     = [];
+
+        if (!self::isNeededURL($requestUrl, $attributeUrl)) {
+            return $result;
+        };
+
+        foreach (self::getUrlsToArray($requestUrl) as $key => $row) {
+            if ($row === $attrArr[$key]) {
+                continue;
+            }
+
+            $result[] = $row; 
+        }
+
+        return array_combine(self::getNeededArguments($attributeUrl)[1], $result);
     }
 }

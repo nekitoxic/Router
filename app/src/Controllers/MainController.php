@@ -14,7 +14,7 @@ class MainController
         $this->token = $token;
     }
 
-    #[Endpoint('/main/{id}/company/{slug}', 'main_index')]
+    #[Endpoint('/main/{id}/company/{value}/{num}', 'main_index')]
     public function index(Token $token, string $value, int $num) 
     {
         return ['url' => '/main', 'name' => 'mainIndex', 'value' => 'someValue'];

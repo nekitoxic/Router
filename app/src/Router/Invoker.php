@@ -22,10 +22,10 @@ class Invoker
         $controller = $this->getControllerByUrl();
 
         if (!empty($controller)) {
-            $class  = ReflectionResolver::classResolve($controller['class']);
+            $class  = DIService::classResolve($controller['class']);
             $method = new ReflectionMethod($class, $controller['method']);
 
-            // $method->invokeArgs($class, ReflectionResolver::methodResolve($method));
+            $method->invokeArgs($class, DIService::methodResolve($method, $this->requestUrl));
         }
 
         return $responce->toArray();
@@ -33,12 +33,12 @@ class Invoker
 
     private function getControllerByUrl(): array
     {
-        foreach (StringHelper::pathToNamespace(FileHelper::getControllersFile()) as $className) {
-            foreach ((new ReflectionClass($className))->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
-                foreach ($method->getAttributes() as $attribute) {
-                    if (URLService::isNeededURL($this->requestUrl, $attribute->newInstance()->getParams()['url'])) {
-                        return ['class' => $className, 'method' => $method->name];
-                    }
+        foreach (StringHelper::pathToNamespace(FileHelper::getControllersFile()) as $class) {
+            foreach ((new ReflectionClass($class))->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
+                $attribute = URLService::getNeededAttributeByUrl($this->requestUrl, $method->getAttributes(Endpoint::class));
+
+                if (null !== $attribute) {
+                    return ['class' => $class, 'method' => $method->name];
                 }
             }
         }
